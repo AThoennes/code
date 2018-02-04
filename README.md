@@ -6,5 +6,5 @@ a main method in the class or not. By default, this script will write the file a
 it's contents to the Desktop.
 
 ## Installation
-To use, put the *Emphasised text*code file into the directory, *Emphasised text*/usr/local/bin/ and put *Emphasised text*. /usr/local/bin/code
-into *Emphasised text*~/.bash_profile
+To use, put the *code* file into the directory, */usr/local/bin/* and put *. /usr/local/bin/code*
+into *~/.bash_profile*
