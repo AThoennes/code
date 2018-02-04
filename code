@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#################################################################
+# creates a code file with the desired extension and            #
+# a proper comment header                                       #
+#################################################################
+function code
+{
+  # store the parameters
+  MY_FILE="$1"
+  isMain="$2"
+  sc_dir=~/Desktop/
+
+  # get the current user's id
+  user=$USER
+
+  # get the current date
+  currDate=$(date +%F)
+
+  # now create the MY_FILE
+  touch "${MY_FILE}"
+  mv -f "$MY_FILE" "$sc_dir"
+
+  MY_FILEName="${MY_FILE%.*}"
+  extension="${MY_FILE##*.}"
+
+  tmp="$sc_dir$MY_FILE"
+
+  if [ "$extension" = "java" ]; then
+    # now add the comment to the top of the MY_FILE
+    echo "/**********************************************" >> "$sc_dir${MY_FILE}"
+    echo "/*                                            * " >> "$sc_dir${MY_FILE}"
+    echo "/*     Created by: ${user} on ${currDate}         *" >> "$sc_dir${MY_FILE}"
+    echo "/*                                            * " >> "$sc_dir${MY_FILE}"
+    echo -e "/**********************************************/\n" >> "$sc_dir${MY_FILE}"
+
+    # add the class declaration
+    echo -e "Public class ${MY_FILEName}\n{" >> "$sc_dir${MY_FILE}"
+
+    # if this is the main class then add a main method
+    if [ "$isMain" = "main" ]; then
+      echo -e "\tPublic static void main (String [] args)\n\t{\n\t\t// code goes here\n\t}" >> "$sc_dir${MY_FILE}"
+    fi
+  fi
+  # add the closing curly brace to finish the class
+  echo  "}" >> "$sc_dir${MY_FILE}"
+}
