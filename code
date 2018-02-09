@@ -1,15 +1,71 @@
 #!/bin/bash
 
 #################################################################
-# creates a code file with the desired extension and            #
-# a proper comment header                                       #
+# This script creates a code file with the desired extension    #
+# anda proper comment header                                    #
+#                                                               #
+# INSTRUCTIONS:                                                 #
+#   you invoke this command by typing 'code'. You must specify  #
+#   a file to be created as well but the path is optional. The  #
+#   formats are:                                                #
+#                                                               #
+#     code Game.java                                            #
+#     code Game.java main                                       #
+#     code Game.java main ~/Documents/My_Game/                  #
+#     code Game.java ~/Documents/My_Game/                       #
+#                                                               #
+# NOTE: If no path is specified then this will write the        #
+# file to "~/Desktop/" by default.                              #
+#                                                               #
+#                                                               #
+# Created by: Alex Thoennes on January 28, 2018                 #
+#                                                               #
 #################################################################
 function code
 {
+  isMain="no"
+
+  OPTIND=1
+  while getopts ":hm" opt; do
+    case ${opt} in
+      h )
+        echo "Usage:"
+        echo "    code -h                     Display this help message"
+        echo "    code -m <file name>         Signifies this as a main class and writes to the Desktop"
+        echo "    code -m <file name> <path>  Signifies this as a main class and writes to the desired path"
+        echo "    code <file name> <path>     Writes a regualr class file to the desired path"
+        return
+        ;;
+      m )
+        isMain="main"
+        ;;
+      \? )
+        echo "Invalid option: -$OPTARG" 1>&2
+        ;;
+      esac
+    done
+  shift $((OPTIND -1))
+
   # store the parameters
   MY_FILE="$1"
-  isMain="$2"
-  sc_dir=~/Desktop/
+  path="$2"
+
+  # this is the default path
+  default=~/Desktop/
+
+  # this is used to correct user errors in the path
+  fwdSlash=/
+
+  # if [ -z "$var" ] -> returns true if var is empty
+  # if [ ! -z "$var" ]  -> return true if var is not empty
+  #
+  # if src_dir is empty then use the default path
+  if [ -z "$path" ]; then
+    path="$default"
+  # if the last character in the path isn't a / then append it to the path
+  elif [ "${path: -1}" != "$fwdSlash" ]; then
+    path="$path$fwdSlash"
+  fi
 
   # get the current user's id
   user=$USER
@@ -17,31 +73,37 @@ function code
   # get the current date
   currDate=$(date +%F)
 
-  # now create the MY_FILE
-  touch "${MY_FILE}"
-  mv -f "$MY_FILE" "$sc_dir"
+  # grab the extension and the file name
+  fileName="${MY_FILE%.*}"
+  ext="${MY_FILE##*.}"
 
-  MY_FILEName="${MY_FILE%.*}"
-  extension="${MY_FILE##*.}"
+  # create the full path
+  MY_FILE="$path$MY_FILE"
 
-  tmp="$sc_dir$MY_FILE"
+  # If you are creating a .java file
+  # THIS WILL FAIL IF THE FILE EXISTS
+  if [ ! -e "$MY_FILE" ] && [ "$ext" = "java" ]; then
+    # create the file
+    touch "$MY_FILE"
 
-  if [ "$extension" = "java" ]; then
-    # now add the comment to the top of the MY_FILE
-    echo "/**********************************************" >> "$sc_dir${MY_FILE}"
-    echo "/*                                            * " >> "$sc_dir${MY_FILE}"
-    echo "/*     Created by: ${user} on ${currDate}         *" >> "$sc_dir${MY_FILE}"
-    echo "/*                                            * " >> "$sc_dir${MY_FILE}"
-    echo -e "/**********************************************/\n" >> "$sc_dir${MY_FILE}"
+    # now add the header comment to the file
+    echo "/**********************************************" >> "$MY_FILE"
+    echo "/*                                            * " >> "$MY_FILE"
+    echo "/*     Created by: ${user} on ${currDate}         *" >> "$MY_FILE"
+    echo "/*                                            * " >> "$MY_FILE"
+    echo -e "/**********************************************/\n" >> "$MY_FILE"
 
     # add the class declaration
-    echo -e "Public class ${MY_FILEName}\n{" >> "$sc_dir${MY_FILE}"
+    echo -e "Public class ${fileName}\n{" >> "$MY_FILE"
 
     # if this is the main class then add a main method
     if [ "$isMain" = "main" ]; then
-      echo -e "\tPublic static void main (String [] args)\n\t{\n\t\t// code goes here\n\t}" >> "$sc_dir${MY_FILE}"
+      echo -e "\tPublic static void main (String [] args)\n\t{\n\t\t// code goes here\n\t}" >> "$MY_FILE"
     fi
+
+    # add the closing curly brace to finish the class
+    echo  "}" >> "$MY_FILE"
+  else
+    echo "ERROR: File $MY_FILE already exists!"
   fi
-  # add the closing curly brace to finish the class
-  echo  "}" >> "$sc_dir${MY_FILE}"
 }
