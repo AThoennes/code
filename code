@@ -6,16 +6,11 @@
 #                                                               #
 # INSTRUCTIONS:                                                 #
 #   you invoke this command by typing 'code'. You must specify  #
-#   a file to be created as well but the path is optional. The  #
-#   formats are:                                                #
+#   a file to be created but the path is optional.              #
 #                                                               #
-#     code Game.java                                            #
-#     code Game.java main                                       #
-#     code Game.java main ~/Documents/My_Game/                  #
-#     code Game.java ~/Documents/My_Game/                       #
-#                                                               #
-# NOTE: If no path is specified then this will write the        #
-# file to "~/Desktop/" by default.                              #
+# NOTE:                                                         #
+#   If no path is specified then this will write the            #
+#   file to "~/Desktop/" by default.                            #
 #                                                               #
 #                                                               #
 # Created by: Alex Thoennes on January 28, 2018                 #
